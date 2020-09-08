@@ -4,6 +4,7 @@ import time
 import joblib
 import numpy as np
 import pandas as pd
+import seaborn as sns
 import preprocessing as p
 import matplotlib.pyplot as plt
 
@@ -16,22 +17,17 @@ from sklearn.metrics import precision_recall_curve, average_precision_score
 from sklearn.metrics import confusion_matrix,classification_report, accuracy_score
 from sklearn.model_selection import cross_val_score, GridSearchCV, train_test_split
 
-
 start_time = time.time()
 
-#def read_hdf(filename):
- #   'converts a filename to a pandas dataframe'
-  #  return pd.read_hdf(filename)
-    
 def read_feather(filename):
     'converts a filename to a pandas dataframe'
     return pd.read_feather(filename)
 
 TRAIN = ['sawa','vgh117','goku','Pseudomonas','Ecoli','Staphylococcus','Enterococcus']
 file_list = []
+
 for strain in TRAIN:
     file_list.append('/big6_disk/shiuanrung107/cdspolish/0712/alignment/weight4/{strain}/alignment.feather'.format(strain=strain))
-
 
 with Pool(processes=8) as pool:
     df_list = pool.map(read_feather, file_list)
@@ -40,28 +36,21 @@ with Pool(processes=8) as pool:
     pool.join()
 
 train = p.double_ins_chaos(train)
-
 Y_train = train['label']
 print('Label count: \n',Y_train.value_counts())
 Y_train.astype(object)
-
 X_train = p.preprocessing(train)
-#X_train = pd.get_dummies(X_train, columns=['draft','homopolymer'])
-#X_train = pd.get_dummies(X_train, columns=['indel_3n'])
 X_train = pd.DataFrame(X_train.drop(['label', 'position'], axis=1))
-
 print(X_train.columns)
 print('X_train shape: ', X_train.shape)
 print('Y_train shape: ', Y_train.shape)
 
-
 X_train, X_val, Y_train, Y_val = train_test_split(X_train, Y_train, test_size = 0.1, random_state=1)
 
- 
 clf = RandomForestClassifier(n_estimators=20, random_state=42,n_jobs=-1)
 clf.fit(X_train, Y_train) 
-
 joblib.dump(clf, 'RF.model')
+
 y_pred = clf.predict(X_val) 
 y_score= clf.predict_proba(X_val)
 print(clf.get_params())
@@ -71,23 +60,17 @@ print ("Accuracy : ", accuracy_score(Y_val,y_pred)*100)
 print(classification_report(Y_val, y_pred))
 
 
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn import metrics
 cm =confusion_matrix(Y_val,y_pred)
 plt.figure(figsize=(15,15))
 ax= plt.subplot()
 sns.heatmap(cm, annot=True, linewidths=.5, square = True, cmap = 'Blues_r', fmt='g', annot_kws={"size":15}, ax=ax);
 ax.set_xticklabels( ['A','T','C','G','deletion','keep'])
 ax.set_yticklabels( ['A','T','C','G','deletion','keep'])
-
 plt.ylabel('Actual label');
 plt.xlabel('Predicted label');
 all_sample_title = 'Accuracy Score: {0}'.format(accuracy_score(Y_val,y_pred)*100)
 plt.title(all_sample_title, size = 15);
-#ax.xaxis.set_ticklabels(targets); ax.yaxis.set_ticklabels(targets);
 plt.savefig('confusion.png')
-
 end_time = time.time()
 print(end_time-start_time)
 
@@ -109,10 +92,6 @@ for i in range(X_train.shape[1]):
     plt.xticks(np.arange(feat_labels.shape[0]),feat_labels,rotation=90,fontsize=15)
 plt.savefig("importances.png")
 print("======")
-
-
-
-
 
 # Compute ROC curve and ROC area for each class
 fpr = dict()
@@ -238,92 +217,8 @@ for target, color in zip(targets,colors):
                , s = 50)
 ax.legend(targets)
 ax.grid()
-plt.savefig('pca_5.png')
+plt.savefig('pca.png')
 
-fig = plt.figure(figsize = (8,8))
-ax = fig.add_subplot(1,1,1) 
-ax.set_xlabel('Principal Component 1', fontsize = 15)
-ax.set_ylabel('Principal Component 2', fontsize = 15)
-ax.set_title('2 component PCA', fontsize = 20)
-targets = [0,1,2,3,4]
-colors = ['black', 'blue', 'purple', 'yellow', 'lime'] 
-for target, color in zip(targets,colors):
-    indicesToKeep = finalDf.iloc[:,-1] == target
-    ax.scatter(finalDf.loc[indicesToKeep, 'principal component 1']
-               , finalDf.loc[indicesToKeep, 'principal component 2']
-               , c = color
-               , s = 50)
-ax.legend(targets)
-ax.grid()
-plt.savefig('pca_4.png')
-
-fig = plt.figure(figsize = (8,8))
-ax = fig.add_subplot(1,1,1) 
-ax.set_xlabel('Principal Component 1', fontsize = 15)
-ax.set_ylabel('Principal Component 2', fontsize = 15)
-ax.set_title('2 component PCA', fontsize = 20)
-targets = [0,1,2,3]
-colors = ['black', 'blue', 'purple', 'yellow'] 
-for target, color in zip(targets,colors):
-    indicesToKeep = finalDf.iloc[:,-1] == target
-    ax.scatter(finalDf.loc[indicesToKeep, 'principal component 1']
-               , finalDf.loc[indicesToKeep, 'principal component 2']
-               , c = color
-               , s = 50)
-ax.legend(targets)
-ax.grid()
-plt.savefig('pca_3.png')
-
-fig = plt.figure(figsize = (8,8))
-ax = fig.add_subplot(1,1,1) 
-ax.set_xlabel('Principal Component 1', fontsize = 15)
-ax.set_ylabel('Principal Component 2', fontsize = 15)
-ax.set_title('2 component PCA', fontsize = 20)
-targets = [0,1,2]
-colors = ['black', 'blue', 'purple'] 
-for target, color in zip(targets,colors):
-    indicesToKeep = finalDf.iloc[:,-1] == target
-    ax.scatter(finalDf.loc[indicesToKeep, 'principal component 1']
-               , finalDf.loc[indicesToKeep, 'principal component 2']
-               , c = color
-               , s = 50)
-ax.legend(targets)
-ax.grid()
-plt.savefig('pca_2.png')
-
-fig = plt.figure(figsize = (8,8))
-ax = fig.add_subplot(1,1,1) 
-ax.set_xlabel('Principal Component 1', fontsize = 15)
-ax.set_ylabel('Principal Component 2', fontsize = 15)
-ax.set_title('2 component PCA', fontsize = 20)
-targets = [0,1]
-colors = ['black', 'blue'] 
-for target, color in zip(targets,colors):
-    indicesToKeep = finalDf.iloc[:,-1] == target
-    ax.scatter(finalDf.loc[indicesToKeep, 'principal component 1']
-               , finalDf.loc[indicesToKeep, 'principal component 2']
-               , c = color
-               , s = 50)
-ax.legend(targets)
-ax.grid()
-plt.savefig('pca_1.png')
-
-fig = plt.figure(figsize = (8,8))
-ax = fig.add_subplot(1,1,1) 
-ax.set_xlabel('Principal Component 1', fontsize = 15)
-ax.set_ylabel('Principal Component 2', fontsize = 15)
-ax.set_title('2 component PCA', fontsize = 20)
-targets = [0]
-colors = ['black'] 
-for target, color in zip(targets,colors):
-    indicesToKeep = finalDf.iloc[:,-1] == target
-    ax.scatter(finalDf.loc[indicesToKeep, 'principal component 1']
-               , finalDf.loc[indicesToKeep, 'principal component 2']
-               , c = color
-               , s = 50)
-ax.legend(targets)
-ax.grid()
-plt.savefig('pca_0.png')
 '''
 
 
