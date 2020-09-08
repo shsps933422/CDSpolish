@@ -1,23 +1,16 @@
 import os
-import multiprocessing
 import time
+import multiprocessing
 
 start_time = time.time()
 
+DRAFTS=["Bacillus","ccu063","ecoli","Ecoli","Enterococcus","goku","hide","Listeria","Pseudomonas","Salmonella","sawa","Staphylococcus","sue","vgh117"]
 
-#DRAFTS=["Bacillus","ccu063","ecoli","Ecoli","Enterococcus","goku","hide","Listeria","Pseudomonas","Salmonella","sawa","Staphylococcus","sue","vgh117"]
-
-#DRAFTS2=["Bacillus","ccu063","ecoli","hide","Listeria","Salmonella","sue"]
-
-DRAFTS=["ecoli"]
-
-draft_path='/bip7_disk/shiuanrung107/20200817/ecoli/draft/'
-paf_path='/bip7_disk/shiuanrung107/20200817/ecoli/final_paf/'
-
+draft_path='/big6_disk/shiuanrung107/cdspolish/draft_medaka/'
+paf_path='/bip7_disk/shiuanrung107/20200817/final_paf/'
 
 #paf
 os.system('python paf.py > paf.out')
-
 
 #alignment
 def alignment(DRAFTS):
@@ -53,7 +46,6 @@ pool = multiprocessing.Pool(14)
 pool.map(polish, DRAFTS)
 pool.close()
 pool.join()
-
 
 os.system('python accuracy.py')
 
