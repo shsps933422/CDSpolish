@@ -1,9 +1,10 @@
-import pandas as pd
 import sys
-from Bio import SeqIO
 import time
-import more_itertools as mit
 import numpy as np
+import pandas as pd
+import more_itertools as mit
+
+from Bio import SeqIO
 
 def get_nuc(label):
     if label == 0:
@@ -14,6 +15,7 @@ def get_nuc(label):
         return 'C'
     elif label == 3:
         return 'G'
+    
 start = time.time()    
 result = sys.argv[1]
 draft = sys.argv[2]
@@ -21,11 +23,8 @@ draft = sys.argv[2]
 d_position = []
 df = pd.read_feather(result)
 record = SeqIO.read(draft,"fasta")
-    
 deletion = df[df['predict'] == 4].position.values #deletion
-#insertion = df[(df['predict'] != 8) & (df['predict'] != 7) & (df['predict'] != 6) & (df['predict'] != 5) & (df['predict'] != 4)] #insertion
 insertion = df[(df['predict'] != 5) & (df['predict'] != 4)] #insertion
-# same = df[df['predict'] == 5].position.values
 
 d_temp = [list(group) for group in mit.consecutive_groups(deletion)]  
 for key in d_temp:
