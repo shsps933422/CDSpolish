@@ -1,7 +1,6 @@
-# M.S. Thesis
-# Assembly polishing for Nanopore sequencing using random forest with genus-specific coding sequences 
+# M.S. Thesis - Assembly polishing for Nanopore sequencing using random forest with genus-specific coding sequences 
 
-# Abstract
+## Abstract
 Nanopore sequencing has the advantages of fast sequencing, real-time determination of sequences and ultra-long reads, etc. Ultra-long reads is essential for reconstructing a complete
 genome. However, the assembled genome requires further quality improvement as a result of the high error rate of Nanopore sequencing. Existing methods correct errors by training models
 from reads or signals; nevertheless, they are unable to correct Nanopore systemic errors dominated by insertions and deletions. We observed coding sequences are highly conservation, where
