@@ -1,17 +1,13 @@
 import os
 import time
 
-#DRAFTS=["Bacillus","ccu063","ecoli","Ecoli","Enterococcus","goku","hide","Listeria","Pseudomonas","Salmonella","sawa","Staphylococcus","sue","vgh117"]
-#GENUS=["Bacillus","Proteus","Escherichia","Escherichia","Enterococcus","Proteus","Shewanella","Listeria","Pseudomonas","Salmonella","Klebsiella","Staphylococcus","Elizabethkingia","Shewanella"]
-DRAFTS=["ecoli"]
-GENUS=["Escherichia"]
-
+DRAFTS=["Bacillus","ccu063","ecoli","Ecoli","Enterococcus","goku","hide","Listeria","Pseudomonas","Salmonella","sawa","Staphylococcus","sue","vgh117"]
+GENUS=["Bacillus","Proteus","Escherichia","Escherichia","Enterococcus","Proteus","Shewanella","Listeria","Pseudomonas","Salmonella","Klebsiella","Staphylococcus","Elizabethkingia","Shewanella"]
 
 db_path='/big6_disk/shiuanrung107/cdspolish/seqkit_cdsdb/'
-truth_path='/bip7_disk/shiuanrung107/20200817/ecoli/truth/'
+truth_path='/big6_disk/shiuanrung107/cdspolish/truth/'
 
-
-draft_path='/bip7_disk/shiuanrung107/20200817/ecoli/draft/'    # draft
+draft_path='/big6_disk/shiuanrung107/cdspolish/draft_medaka/'    # draft
 
 if not os.path.exists('paf'):
     os.mkdir('paf')
