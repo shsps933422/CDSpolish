@@ -1,15 +1,10 @@
 import os
 import multiprocessing
 
-#TEST=["Bacillus","ccu063","ecoli","hide","Listeria","Salmonella","sue"]
-#TRAIN=["Ecoli","Enterococcus","goku","Pseudomonas","sawa","Staphylococcus","vgh117"]
-
-TEST=["ecoli"]
-TRAIN=["ecoli"]
-
+TEST=["Bacillus","ccu063","ecoli","hide","Listeria","Salmonella","sue"]
+TRAIN=["Ecoli","Enterococcus","goku","Pseudomonas","sawa","Staphylococcus","vgh117"]
 
 fastmer = '/big6_disk/shiuanrung107/assembly_accuracy/fastmer.py'
-
 truth='/bip7_disk/shiuanrung107/20200817/ecoli/truth/'
 
 os.system('touch accuracy_test.txt')
