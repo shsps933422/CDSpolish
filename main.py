@@ -1,10 +1,8 @@
-import sys
-#import mash
-#import download as d
 import os
-import alignment2csv
+import sys
 import alignment
 import alignment2
+import alignment2csv
 
 def main():    
     read = sys.argv[1]
@@ -12,7 +10,7 @@ def main():
     truth_paf = sys.argv[3]
     #dup_paf = sys.argv[4]
     #gff_paf = sys.argv[5]
-    db_np = alignment.align(read, db_paf, truth_paf)#,gff_paf)
+    db_np = alignment.align(read, db_paf, truth_paf)
     truth_np = alignment2.align(read, db_paf, truth_paf)
     alignment2csv.tocsv(read, db_np, truth_np)
     
