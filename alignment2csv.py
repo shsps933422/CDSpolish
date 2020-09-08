@@ -1,7 +1,7 @@
-from Bio import SeqIO
+import sys
 import numpy as np
 import pandas as pd
-import sys
+from Bio import SeqIO
 from collections import Counter
 
 np.seterr(divide='ignore',invalid='ignore')
@@ -11,12 +11,11 @@ def tocsv(read, db_np, truth_np):
     genome_size = len(record)
     db_arr = np.load(db_np)  
     truth_arr = np.load(truth_np)
+    homo_arr = np.zeros(genome_size, dtype=np.int)
 
     db_arr, db_base, db_Ins = db_arr['arr_0'], db_arr['arr_1'], db_arr['arr_2']
     truth_arr, truth_base, truth_Ins = truth_arr['arr_0'], truth_arr['arr_1'], truth_arr['arr_2']
 
-    homo_arr = np.zeros(genome_size, dtype=np.int)
-    
     position = []
     draft = []
     A, T, C , G = [], [], [], []
@@ -25,15 +24,11 @@ def tocsv(read, db_np, truth_np):
     homo = []
     coverage = []
     label = []
-    #deletion_length=[]
-    #insertion_length=[]
     indel_length=[]
-    
     
     for i in range(genome_size):
         count = 0
         count2=1
-        #count3=0
         if truth_base[i] != 0 and db_base[i] != 0:
             position.append(i)
             draft.append(record[i])
@@ -47,7 +42,6 @@ def tocsv(read, db_np, truth_np):
             ins_C.append(0)
             ins_G.append(0)
             coverage.append(db_base[i])
-            
 
             index = i
             nuc = record[i]
@@ -65,7 +59,6 @@ def tocsv(read, db_np, truth_np):
             
             if db_arr[i][4]==0:
                 indel_length.append(0)
-                
             else:
                 index2=i
                 while db_arr[i][4]/db_base[i]>0.5 and db_arr[i+1][4]/db_base[i+1]>0.5:
@@ -78,9 +71,6 @@ def tocsv(read, db_np, truth_np):
                     i -= 1
                 i = index2
                 indel_length.append(count2)
-                
-            
-            
                 
             if truth_arr[i][4] > 0:
                 label.append(4)
@@ -96,8 +86,7 @@ def tocsv(read, db_np, truth_np):
                     C.append(0)
                     G.append(0)
                     gap.append(0)
-       
-                    
+
                     if j==0:
                         count3=1
                         if (db_Ins[i][j+1][0]/db_base[i]>0.5 or db_Ins[i][j+1][1]/db_base[i]>0.5 or db_Ins[i][j+1][2]/db_base[i]>0.5 or db_Ins[i][j+1][3]/db_base[i]>0.5) :
@@ -106,57 +95,41 @@ def tocsv(read, db_np, truth_np):
                                 count3+=1
                                 if (db_Ins[i][j+3][0]/db_base[i]>0.5 or db_Ins[i][j+3][1]/db_base[i]>0.5 or db_Ins[i][j+3][2]/db_base[i]>0.5 or db_Ins[i][j+3][3]/db_base[i]>0.5):
                                     count3+=1
-                                    indel_length.append(count3)
-                                    
+                                    indel_length.append(count3) 
                                 else:
-                                    indel_length.append(count3)
-                                    
+                                    indel_length.append(count3)      
                             else:
-                                indel_length.append(count3)
-                                
-                                
+                                indel_length.append(count3)        
                         else:
-                            indel_length.append(count3)
-                            
+                            indel_length.append(count3)          
                     elif j==1:
                         count3=2
                         if (db_Ins[i][j+1][0]/db_base[i]>0.5 or db_Ins[i][j+1][1]/db_base[i]>0.5 or db_Ins[i][j+1][2]/db_base[i]>0.5 or db_Ins[i][j+1][3]/db_base[i]>0.5) :
                             count3+=1
                             if (db_Ins[i][j+2][0]/db_base[i]>0.5 or db_Ins[i][j+2][1]/db_base[i]>0.5 or db_Ins[i][j+2][2]/db_base[i]>0.5 or db_Ins[i][j+2][3]/db_base[i]>0.5):
                                 count3+=1
-                                indel_length.append(count3)
-                                
+                                indel_length.append(count3)   
                             else:
                                 indel_length.append(count3)
-                                
-                                
                         else:
-                            indel_length.append(count3)
-                            
+                            indel_length.append(count3)      
                     elif j==2:
                         count3=3
                         if (db_Ins[i][j+1][0]/db_base[i]>0.5 or db_Ins[i][j+1][1]/db_base[i]>0.5 or db_Ins[i][j+1][2]/db_base[i]>0.5 or db_Ins[i][j+1][3]/db_base[i]>0.5) :
                             count3+=1
                             indel_length.append(count3)
-                            
                         else:
-                            indel_length.append(count3)
-                            
+                            indel_length.append(count3)   
                     elif j==3:
                         count3=4
                         indel_length.append(count3)
-                        
-                        
-                        
-                    
-                    
+
                     ins_A.append(db_Ins[i][j][0])
                     ins_T.append(db_Ins[i][j][1])
                     ins_C.append(db_Ins[i][j][2])
                     ins_G.append(db_Ins[i][j][3])
                     coverage.append(db_base[i])
-                    
-                   
+
                     if truth_Ins[i][j][0] == 0 and truth_Ins[i][j][1] == 0 and truth_Ins[i][j][2] == 0 and truth_Ins[i][j][3] == 0 :
                         label.append(5)              
                     else:
@@ -164,6 +137,7 @@ def tocsv(read, db_np, truth_np):
                             if truth_Ins[i][j][k] != 0:
                                 label.append(k)
                                 break
+                                
     for i in range(genome_size):
         if truth_base[i] != 0 and db_base[i] != 0:
             homo.append(homo_arr[i])
@@ -198,16 +172,6 @@ def tocsv(read, db_np, truth_np):
             "indel_length":indel_length,
             "label": label
         }
-    # print(len(position))
-    # print(len(A))
-    # print(len(gap))
-    # print(len(ins_C))
-    #print(len(homo))
-    #print(len(deletion_length))
-    #print(len(insertion_length))
-    #print(len(label))
     df = pd.DataFrame(dict)
-    # df.to_csv("alignment.csv",index=False)
-    #df.to_hdf('alignment.h5', key='df', mode='w')
     df.to_feather('alignment.feather')
 #tocsv(sys.argv[1], sys.argv[2], sys.argv[3])
