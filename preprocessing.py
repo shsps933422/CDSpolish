@@ -17,18 +17,6 @@ def preprocessing(data):
             new_draft.append(4)
 
     data['draft'] = new_draft
-    '''
-    data['A'] = data['A'].astype(int) / data['coverage'].astype(int)
-    data['T'] = data['T'].astype(int) / data['coverage'].astype(int)
-    data['C'] = data['C'].astype(int) / data['coverage'].astype(int)
-    data['G'] = data['G'].astype(int) / data['coverage'].astype(int)
-    data['gap'] = data['gap'].astype(int) / data['coverage'].astype(int)
-    data['Ins_A'] = data['Ins_A'].astype(int) / data['coverage'].astype(int)
-    data['Ins_T'] = data['Ins_T'].astype(int) / data['coverage'].astype(int)
-    data['Ins_C'] = data['Ins_C'].astype(int) / data['coverage'].astype(int)
-    data['Ins_G'] = data['Ins_G'].astype(int) / data['coverage'].astype(int)
-    '''
-    #data.loc[data['homopolymer'] > 10, 'homopolymer'] = 10   
     return data
     
 def double_ins_chaos(data):
@@ -38,7 +26,6 @@ def double_ins_chaos(data):
     dis = np.diff(ins_index)
     idxs = np.where((dis < 10) & (dis > 1))[0]
     
-
     for i in idxs:        
         head = data[data.index == ins_index[i]]
         head_total = head[['Ins_A','Ins_T','Ins_C','Ins_G']].sum(axis=1).values[0]
